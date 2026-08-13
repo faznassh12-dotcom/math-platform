@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الرياضيات للتعليم المتوسط - الجزائر</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- محرك MathJax السحابي المضمون لعرض المعادلات -->
+    <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>🇩🇿 ديوان الرياضيات التعليمي</h1>
+        <p>منصة مجانية تفاعلية لطور التعليم المتوسط - الجيل الثاني</p>
+    </header>
+
+    <main>
+        <div class="grid-years">
+            <div class="card" onclick="showLevel('1AM')">
+                <h2>السنة 1 متوسط</h2>
+                <p>الأعداد العشرية والهندسة الأساسية</p>
+            </div>
+            <div class="card" onclick="showLevel('2AM')">
+                <h2>السنة 2 متوسط</h2>
+                <p>الأعداد النسبية والتناسبية</p>
+            </div>
+            <div class="card" onclick="showLevel('3AM')">
+                <h2>السنة 3 متوسط</h2>
+                <p>القوى والمثلث  القائم ث</p>
+            </div>
+            <div class="card" onclick="showLevel('4AM')">
+                <h2>السنة 4 متوسط (BEM)</h2>
+                <p>حساب الجذور، $PGCD$ والدوال</p>
+            </div>
+        </div>
+
+        <section id="content-area" class="content-box" style="display:none;">
+            <button onclick="hideContent()" class="btn-back">⬅️ العودة للرئيسية</button>
+            <div id="dynamic-content"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
