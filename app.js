@@ -1,5 +1,5 @@
 // الرابط السحابي المباشر لقراءة جدول بياناتك الذكي بصيغة JSON
-const sheetUrl = "https://google.com";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFIPM1RGVmPQ/gviz/tq?tqx=out:json&sheet=Feuille1";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
