@@ -1,20 +1,21 @@
-// الرابط السحابي المباشر لقراءة جدول بياناتك الذكي بصيغة JSON
-const sheetUrl = "https://docs.google.com/spreadsheets/d/18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFIPM1RGVmPQ/gviz/tq?tqx=out:json&sheet=Feuille1";
+// JSON الرابط السحابي المباشر لقراءة جدول بياناتك النكي بصيغة
+const sheetUrl = "https://docs.google.com/spreadsheets/d/18JIvC98d1Xi6tCJD0OfdwwdZwVwN-unDFIPM1RGVmPQ/gviz/tq?tqx=out:json&sheet=Feuille1";
 
-async function showLevel(level) {
+async function showlevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
     const contentArea = document.getElementById('content-area');
     const dynamicContent = document.getElementById('dynamic-content');
-    
+
     contentArea.style.display = 'block';
-    dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
+    dynamicContent.innerHTML = "<h2>... جاري تحميل الدروس والتمارين من الأستاذ </h2>";
 
     try {
-        const response = await fetch("https://google.com");
+        // تم تصحيح الرابط هنا لاستخدام المتغير sheetUrl بدلاً من google.com
+        const response = await fetch(sheetUrl);
         const text = await response.text();
-        
+
         // استخراج وتنظيف البيانات القادمة من جوجل
-        const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+        const jsonText = text.substring(text.indexOf("("), text.lastIndexOf(")") + 1);
         const data = JSON.parse(jsonText);
         const rows = data.table.rows;
 
@@ -26,53 +27,31 @@ async function showLevel(level) {
                 content: row.c && row.c[2] ? String(row.c[2].v).trim() : '',
                 video: row.c && row.c[3] ? String(row.c[3].v).trim() : ''
             };
-        }).filter(lesson => lesson.level.toUpperCase() === level.toUpperCase());
+        });
 
-        if (lessons.length === 0) {
-            dynamicContent.innerHTML = `<h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>`;
+        // تصفية الدروس حسب المستوى المختار وعرضها
+        const filteredLessons = lessons.filter(item => item.level === level);
+        
+        if (filteredLessons.length === 0) {
+            dynamicContent.innerHTML = "<p>لا توجد دروس مضافة لهذا المستوى حالياً.</p>";
             return;
         }
 
-        dynamicContent.innerHTML = `<h2>مستوى التعليم المتوسط (${level})</h2>`;
-        
-        // عرض الدروس والتمارين التفاعلية للطلاب
-        lessons.forEach(lesson => {
-            let videoHTML = '';
-            if (lesson.video) {
-                let embedUrl = lesson.video;
-                if (lesson.video.includes("watch?v=")) {
-                    embedUrl = lesson.video.replace("watch?v=", "embed/");
-                } else if (lesson.video.includes("youtu.be/")) {
-                    embedUrl = lesson.video.replace("youtu.be/", "://youtube.com");
-                }
-                videoHTML = `
-                    <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
-                        <iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
-                    </div>
-                `;
-            }
-
-            dynamicContent.innerHTML += `
-                <div class="math-exercise">
-                    <h3>📋 درس: ${lesson.title}</h3>
-                    <p>${lesson.content}</p>
-                    ${videoHTML}
+        let htmlOutput = "";
+        filteredLessons.forEach(lesson => {
+            htmlOutput += `
+                <div class="lesson-card">
+                    <h3>${lesson.title}</h3>
+                    <div class="lesson-body">${lesson.content}</div>
+                    ${lesson.video ? <div class="lesson-video">${lesson.video}</div> : ''}
                 </div>
             `;
         });
 
-        // تشغيل محرك الرياضيات فوراً لتنظيم الرموز
-        if (window.MathJax) {
-            MathJax.typesetPromise();
-        }
+        dynamicContent.innerHTML = htmlOutput;
 
     } catch (error) {
-        dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</h2>";
-        console.error(error);
+        console.error("خطأ في جلب البيانات:", error);
+        dynamicContent.innerHTML = "<p class='error-msg'>حدث خطا أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</p>";
     }
-}
-
-function hideContent() {
-    document.getElementById('content-area').style.display = 'none';
-    document.querySelector('.grid-years').style.display = 'grid';
 }
