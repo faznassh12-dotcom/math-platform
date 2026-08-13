@@ -13,12 +13,12 @@ async function showLevel(level) {
         const response = await fetch(sheetUrl);
         const text = await response.text();
         
-        // استخراج وتنظيف البيانات القادمة من جوجل
+        // استخراج وتنظيف البيانات القادمة من جوجل بنجاح
         const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
         const data = JSON.parse(jsonText);
         const rows = data.table.rows;
 
-        // قراءة الأعمدة بالترتيب الصحيح لجدولك (العمود A=0، B=1، C=2، D=3)
+        // قراءة الأعمدة بطريقة آمنة تماماً تمنع انهيار الموقع بسبب الخانات الفارغة
         let lessons = rows.map(row => {
             if (!row || !row.c) return null;
             return {
