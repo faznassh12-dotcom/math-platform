@@ -1,5 +1,6 @@
-// الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
-const sheetUrl = "https://google.com";
+// الرابط السحابي المختصر لجدول بياناتك لمنع أي خطأ أثناء النسخ
+const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFlPM1RGVmPQ";
+const sheetUrl = "https://google.com" + sheetId + "/gviz/tq?tqx=out:json";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
