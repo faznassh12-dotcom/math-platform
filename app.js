@@ -1,29 +1,75 @@
-function showLevel(level) {
+// الرابط السحابي المباشر لقراءة جدول بياناتك الذكي بصيغة JSON
+const sheetUrl = "https://google.com";
+
+async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
     const contentArea = document.getElementById('content-area');
     const dynamicContent = document.getElementById('dynamic-content');
     
     contentArea.style.display = 'block';
-    
-    if(level === '4AM') {
-        // استخدام String.raw لمنع المتصفح من تخريب الرموز المائلة للرياضيات
-        dynamicContent.innerHTML = String.raw`
-            <h2>مستوى السنة الرابعة متوسط (BEM)</h2>
-            <div class="math-exercise">
-                <h3>📋 درس نموذجي: القاسم المشترك الأكبر (PGCD)</h3>
-                <p>لحساب $PGCD(105, 45)$ نستخدم خوارزمية إقليدس (القسمات المتتالية):</p>
-                <p>$$105 = 45 \times 2 + 15$$</p>
-                <p>$$45 = 15 \times 3 + 0$$</p>
-                <p>إذن الباقي الأخير غير المعدوم هو: **$$PGCD(105, 45) = 15$$**</p>
-            </div>
-        `;
+    dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
+
+    try {
+        const response = await fetch(sheetUrl);
+        const text = await response.text();
         
-        // أمر إجباري للمتصفح لتحديث وعرض المعادلات الرياضية فوراً
+        // استخراج وتنظيف البيانات القادمة من جوجل
+        const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+        const data = JSON.parse(jsonText);
+        const rows = data.table.rows;
+
+        // تحويل أسطر الجدول إلى مصفوفة دروس ذكية وتصفيتها حسب السنة المختارة
+        let lessons = rows.slice(1).map(row => {
+            return {
+                level: row.c[0] ? String(row.c[0].v).trim() : '',
+                title: row.c[1] ? String(row.c[1].v).trim() : '',
+                content: row.c[2] ? String(row.c[2].v).trim() : '',
+                video: row.c[3] ? String(row.c[3].v).trim() : ''
+            };
+        }).filter(lesson => lesson.level.toUpperCase() === level.toUpperCase());
+
+        if (lessons.length === 0) {
+            dynamicContent.innerHTML = `<h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>`;
+            return;
+        }
+
+        dynamicContent.innerHTML = `<h2>مستوى التعليم المتوسط (${level})</h2>`;
+        
+        // عرض الدروس والتمارين التفاعلية للطلاب
+        lessons.forEach(lesson => {
+            let videoHTML = '';
+            // تحويل روابط يوتيوب العادية إلى روابط قابلة للتشغيل داخل الموقع مباشرة
+            if (lesson.video) {
+                let embedUrl = lesson.video;
+                if (lesson.video.includes("watch?v=")) {
+                    embedUrl = lesson.video.replace("watch?v=", "embed/");
+                } else if (lesson.video.includes("youtu.be/")) {
+                    embedUrl = lesson.video.replace("youtu.be/", "://youtube.com");
+                }
+                videoHTML = `
+                    <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
+                        <iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                    </div>
+                `;
+            }
+
+            dynamicContent.innerHTML += `
+                <div class="math-exercise">
+                    <h3>📋 درس: ${lesson.title}</h3>
+                    <p>${lesson.content}</p>
+                    ${videoHTML}
+                </div>
+            `;
+        });
+
+        // تشغيل محرك الرياضيات فوراً لتنظيم الرموز
         if (window.MathJax) {
             MathJax.typesetPromise();
         }
-    } else {
-        dynamicContent.innerHTML = `<h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>`;
+
+    } catch (error) {
+        dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت.</h2>";
+        console.error(error);
     }
 }
 
