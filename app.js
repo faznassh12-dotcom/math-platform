@@ -10,7 +10,7 @@ async function showLevel(level) {
     dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
 
     try {
-        const response = await fetch(sheetUrl);
+        const response = await fetch("https://google.com");
         const text = await response.text();
         
         // استخراج وتنظيف البيانات القادمة من جوجل
@@ -18,13 +18,13 @@ async function showLevel(level) {
         const data = JSON.parse(jsonText);
         const rows = data.table.rows;
 
-        // تحويل أسطر الجدول إلى مصفوفة دروس ذكية وتصفيتها حسب السنة المختارة
-        let lessons = rows.slice(1).map(row => {
+        // قراءة الأعمدة بالترتيب الصحيح لجدولك (A=0, B=1, C=2, D=3)
+        let lessons = rows.map(row => {
             return {
-                level: row.c[0] ? String(row.c[0].v).trim() : '',
-                title: row.c[1] ? String(row.c[1].v).trim() : '',
-                content: row.c[2] ? String(row.c[2].v).trim() : '',
-                video: row.c[3] ? String(row.c[3].v).trim() : ''
+                level: row.c && row.c[0] ? String(row.c[0].v).trim() : '',
+                title: row.c && row.c[1] ? String(row.c[1].v).trim() : '',
+                content: row.c && row.c[2] ? String(row.c[2].v).trim() : '',
+                video: row.c && row.c[3] ? String(row.c[3].v).trim() : ''
             };
         }).filter(lesson => lesson.level.toUpperCase() === level.toUpperCase());
 
@@ -38,7 +38,6 @@ async function showLevel(level) {
         // عرض الدروس والتمارين التفاعلية للطلاب
         lessons.forEach(lesson => {
             let videoHTML = '';
-            // تحويل روابط يوتيوب العادية إلى روابط قابلة للتشغيل داخل الموقع مباشرة
             if (lesson.video) {
                 let embedUrl = lesson.video;
                 if (lesson.video.includes("watch?v=")) {
@@ -68,7 +67,7 @@ async function showLevel(level) {
         }
 
     } catch (error) {
-        dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت.</h2>";
+        dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</h2>";
         console.error(error);
     }
 }
