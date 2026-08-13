@@ -1,67 +1,79 @@
-const sheetUrl = "https://docs.google.com/spreadsheets/d/18JIvC98d1Xi6tCJD0OfdwwdZwVwN-unDFIPM1RGVmPQ/gviz/tq?tqx=out:json";
+// الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
+const sheetUrl = "https://google.com";
 
-async function showlevel(level) {
+async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
     const contentArea = document.getElementById('content-area');
     const dynamicContent = document.getElementById('dynamic-content');
-
+    
     contentArea.style.display = 'block';
-    dynamicContent.innerHTML = "<h2>... جاري تحميل الدروس والتمارين من الأستاذ </h2>";
+    dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
 
     try {
         const response = await fetch(sheetUrl);
         const text = await response.text();
-
-        // تنظيف الاستجابة واستخراج الجيوسنص بدقة
-        const startIndex = text.indexOf("{");
-        const endIndex = text.lastIndexOf(")");
         
-        if (startIndex === -1 || endIndex === -1) {
-            throw new Error("تنسيق استجابة جدول البيانات غير صحيح.");
-        }
-
-        const jsonText = text.substring(startIndex, endIndex);
+        // استخراج وتنظيف البيانات القادمة من جوجل
+        const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
         const data = JSON.parse(jsonText);
-        
-        if (!data.table || !data.table.rows) {
-            dynamicContent.innerHTML = "<p>الجدول فارغ أو لا يحتوي على صفوف بيانات.</p>";
-            return;
-        }
-
         const rows = data.table.rows;
 
+        // قراءة الأعمدة بالترتيب الصحيح لجدولك (العمود A=0، B=1، C=2، D=3)
         let lessons = rows.map(row => {
+            if (!row || !row.c) return null;
             return {
-                level: row.c && row.c[0] && row.c[0].v !== null ? String(row.c[0].v).trim() : '',
-                title: row.c && row.c[1] && row.c[1].v !== null ? String(row.c[1].v).trim() : '',
-                content: row.c && row.c[2] && row.c[2].v !== null ? String(row.c[2].v).trim() : '',
-                video: row.c && row.c[3] && row.c[3].v !== null ? String(row.c[3].v).trim() : ''
+                level: row.c[0] && row.c[0].v ? String(row.c[0].v).trim() : '',
+                title: row.c[1] && row.c[1].v ? String(row.c[1].v).trim() : '',
+                content: row.c[2] && row.c[2].v ? String(row.c[2].v).trim() : '',
+                video: row.c[3] && row.c[3].v ? String(row.c[3].v).trim() : ''
             };
-        });
+        }).filter(lesson => lesson !== null && lesson.level.toUpperCase() === level.toUpperCase());
 
-        // تصفية الدروس حسب المستوى
-        const filteredLessons = lessons.filter(item => item.level.toLowerCase() === level.toLowerCase());
-        
-        if (filteredLessons.length === 0) {
-            dynamicContent.innerHTML = <p>لا توجد دروس مضافة لهذا المستوى حالياً (${level}).</p>;
+        if (lessons.length === 0) {
+            dynamicContent.innerHTML = `<h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>`;
             return;
         }
 
-        let htmlOutput = "";
-        filteredLessons.forEach(lesson => {
-            htmlOutput += `
-                <div class="lesson-card" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                    <h3>${lesson.title}</h3>
-                    <div class="lesson-body">${lesson.content}</div>
-                    ${lesson.video ? <div class="lesson-video" style="margin-top: 10px;">${lesson.video}</div> : ''}
+        dynamicContent.innerHTML = `<h2>مستوى التعليم المتوسط (${level})</h2>`;
+        
+        // عرض الدروس والتمارين التفاعلية للطلاب
+        lessons.forEach(lesson => {
+            let videoHTML = '';
+            if (lesson.video) {
+                let embedUrl = lesson.video;
+                if (lesson.video.includes("watch?v=")) {
+                    embedUrl = lesson.video.replace("watch?v=", "embed/");
+                } else if (lesson.video.includes("youtu.be/")) {
+                    embedUrl = lesson.video.replace("youtu.be/", "://youtube.com");
+                }
+                videoHTML = `
+                    <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
+                        <iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                    </div>
+                `;
+            }
+
+            dynamicContent.innerHTML += `
+                <div class="math-exercise">
+                    <h3>📋 درس: ${lesson.title}</h3>
+                    <p>${lesson.content.replace(/\n/g, '<br>')}</p>
+                    ${videoHTML}
                 </div>
             `;
         });
 
-        dynamicContent.innerHTML = htmlOutput;
+        // تشغيل محرك الرياضيات فوراً لتنظيم الرموز
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
 
     } catch (error) {
-        console.error("خطأ تفصيلي:", error);
-        dynamicContent.innerHTML = "<p style='color: red;'>حدث خطأ أثناء جلب الدروس. تأكد أن جدول Google Sheets منشور للعامة وأن الأعمدة مرتبة بشكل صحيح.</p>";
+        dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</h2>";
+        console.error(error);
     }
+}
+
+function hideContent() {
+    document.getElementById('content-area').style.display = 'none';
+    document.querySelector('.grid-years').style.display = 'grid';
 }
