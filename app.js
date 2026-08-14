@@ -1,19 +1,19 @@
 // الرابط السحابي المختصر لجدول بياناتك لمنع أي خطأ أثناء النسخ
-const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFIPM1RGVmPQ";
+const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFlPM1RGVmPQ";
 const sheetUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
     const contentArea = document.getElementById('content-area');
     const dynamicContent = document.getElementById('dynamic-content');
-    
+
     contentArea.style.display = 'block';
     dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
 
     try {
         const response = await fetch(sheetUrl);
         const text = await response.text();
-        
+
         // استخراج وتنظيف البيانات القادمة من جوجل بنجاح
         const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
         const data = JSON.parse(jsonText);
@@ -31,12 +31,12 @@ async function showLevel(level) {
         }).filter(lesson => lesson !== null && lesson.level.toUpperCase() === level.toUpperCase());
 
         if (lessons.length === 0) {
-            dynamicContent.innerHTML = <h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>;
+            dynamicContent.innerHTML = <h2>سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة..قريباً!</h2>;
             return;
         }
 
         dynamicContent.innerHTML = <h2>مستوى التعليم المتوسط (${level})</h2>;
-        
+
         // عرض الدروس والتمارين التفاعلية للطلاب
         lessons.forEach(lesson => {
             let videoHTML = '';
@@ -78,3 +78,5 @@ function hideContent() {
     document.getElementById('content-area').style.display = 'none';
     document.querySelector('.grid-years').style.display = 'grid';
 }
+Compose
+Write to Cive Tta
