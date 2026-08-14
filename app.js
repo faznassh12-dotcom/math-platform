@@ -31,11 +31,11 @@ async function showLevel(level) {
         }).filter(lesson => lesson !== null && lesson.level.toUpperCase() === level.toUpperCase());
 
         if (lessons.length === 0) {
-            dynamicContent.innerHTML = <h2>سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة..قريباً!</h2>;
+            dynamicContent.innerHTML = ` <h2>سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة..قريباً!</h2>`;
             return;
         }
 
-        dynamicContent.innerHTML = <h2>مستوى التعليم المتوسط (${level})</h2>;
+        dynamicContent.innerHTML =` <h2>مستوى التعليم المتوسط (${level})</h2>`;
 
         // عرض الدروس والتمارين التفاعلية للطلاب
         lessons.forEach(lesson => {
@@ -78,5 +78,4 @@ function hideContent() {
     document.getElementById('content-area').style.display = 'none';
     document.querySelector('.grid-years').style.display = 'grid';
 }
-Compose
-Write to Cive Tta
+
