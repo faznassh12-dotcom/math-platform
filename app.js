@@ -1,6 +1,6 @@
 // الرابط السحابي المختصر لجدول بياناتك لمنع أي خطأ أثناء النسخ
-const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFlPM1RGVmPQ";
-const sheetUrl = "https://google.com" + sheetId + "/gviz/tq?tqx=out:json";
+const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFIPM1RGVmPQ";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
@@ -31,11 +31,11 @@ async function showLevel(level) {
         }).filter(lesson => lesson !== null && lesson.level.toUpperCase() === level.toUpperCase());
 
         if (lessons.length === 0) {
-            dynamicContent.innerHTML = `<h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>`;
+            dynamicContent.innerHTML = <h2>قريباً.. سيتم رفع دروس وتمارين هذا المستوى من طرف الأساتذة!</h2>;
             return;
         }
 
-        dynamicContent.innerHTML = `<h2>مستوى التعليم المتوسط (${level})</h2>`;
+        dynamicContent.innerHTML = <h2>مستوى التعليم المتوسط (${level})</h2>;
         
         // عرض الدروس والتمارين التفاعلية للطلاب
         lessons.forEach(lesson => {
@@ -45,7 +45,7 @@ async function showLevel(level) {
                 if (lesson.video.includes("watch?v=")) {
                     embedUrl = lesson.video.replace("watch?v=", "embed/");
                 } else if (lesson.video.includes("youtu.be/")) {
-                    embedUrl = lesson.video.replace("youtu.be/", "://youtube.com");
+                    embedUrl = lesson.video.replace("youtu.be/", "youtube.com/embed/");
                 }
                 videoHTML = `
                     <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
