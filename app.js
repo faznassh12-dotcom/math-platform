@@ -1,6 +1,5 @@
-// الرابط السحابي المختصر لجدول بياناتك لمنع أي خطأ أثناء النسخ
-const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFlPM1RGVmPQ";
-const sheetUrl = "https://google.com" + sheetId + "/gviz/tq?tqx=out:json";
+// الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
+const sheetUrl = "https://google.com";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
@@ -10,7 +9,7 @@ async function showLevel(level) {
     contentArea.style.display = 'block';
     dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
 
-    // تحديد رقم الملف والاسم المناسب حسب المستوى الذي ضغط عليه الطالب
+    // تحديد رقم ملف الـ PDF المرفوع والاسم المناسب حسب المستوى المختار
     let fileNum = "1";
     let levelName = "السنة 1 متوسط";
     
@@ -27,7 +26,7 @@ async function showLevel(level) {
         const data = JSON.parse(jsonText);
         const rows = data.table.rows;
 
-        // قراءة الأعمدة بطريقة آمنة تماماً تمنع انهيار الموقع بسبب الخانات الفارغة
+        // قراءة الأعمدة بالترتيب الدقيق والصحيح (0=A, 1=B, 2=C, 3=D) مع حماية الخانات الفارغة
         let lessons = rows.map(row => {
             if (!row || !row.c) return null;
             return {
@@ -38,9 +37,9 @@ async function showLevel(level) {
             };
         }).filter(lesson => lesson !== null && lesson.level.toUpperCase() === level.toUpperCase());
 
-        // بناء الهيدر الداخلي للمستوى مع زر تحميل الـ PDF المخصص له في المقدمة
+        // بناء الهيدر الداخلي للمستوى مع زر تحميل الـ PDF المخصص والمربوط بملفاتك الحقيقية
         let htmlOutput = `
-            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 2px;">
+            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
                 <h2 style="color: #0056b3; margin-bottom: 15px;">مستوى التعليم المتوسط (${levelName})</h2>
                 <a href="lesson${fileNum}.pdf" download class="btn-download" style="background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; margin-bottom: 15px;">📥 تحميل ملخص مطبوعة ${levelName} (PDF)</a>
             </div>
@@ -52,7 +51,7 @@ async function showLevel(level) {
             return;
         }
         
-        // عرض الدروس القادمة من جدول جوجل تحت زر الـ PDF مباشرة
+        // عرض الدروس القادمة من جدول جوجل بعد قراءتها بالأعمدة الصحيحة
         lessons.forEach(lesson => {
             let videoHTML = '';
             if (lesson.video) {
@@ -80,7 +79,7 @@ async function showLevel(level) {
 
         dynamicContent.innerHTML = htmlOutput;
 
-        // تشغيل محرك الرياضيات فوراً لتنظيم الرموز
+        // تشغيل محرك الرياضيات فوراً لتنظيم الرموز والكسور والجذور
         if (window.MathJax) {
             MathJax.typesetPromise();
         }
