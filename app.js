@@ -1,7 +1,5 @@
 // الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
-const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDF1PM1RGVmPQ";
-// ملاحظة مهمة: هذا الرابط يقرأ افتراضياً الورقة (tab) الأولى فقط في ملف جوجل شيت (gid=0).
-// إذا كان "درس الجذور" في ورقة (Tab) جديدة، لن يظهر أبداً مهما كان الكود صحيحاً.
+const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDFlPM1RGVmPQ";
 const sheetUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
 
 // دالة مساعدة لتنظيف النصوص من المسافات الزائدة والرموز الخفية (مثل علامات الاتجاه RTL/LTR)
@@ -75,37 +73,4 @@ async function showLevel(level) {
           embedUrl = "https://www.youtube.com/embed/" + videoId;
         }
         videoHTML = `
-          <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
-            <iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
-          </div>
-        `;
-      }
-
-      htmlOutput += `
-        <div class="math-exercise">
-          <h3>📋 درس: ${lesson.title}</h3>
-          <p>${lesson.content.replace(/\n/g, '<br>')}</p>
-          ${videoHTML}
-        </div>
-      `;
-    });
-
-    dynamicContent.innerHTML = htmlOutput;
-
-    // تشغيل محرك الرياضيات فوراً لتنظيم الرموز والكسور والجذور
-    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-      window.MathJax.typesetPromise();
-    } else if (window.MathJax) {
-      console.warn("MathJax لم تُحمَّل بشكل صحيح، سيتم عرض الدروس بدون تنسيق رموز رياضية.");
-    }
-
-  } catch (error) {
-    dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</h2>";
-    console.error(error);
-  }
-}
-
-function hideContent() {
-  document.getElementById('content-area').style.display = 'none';
-  document.querySelector('.grid-years').style.display = 'grid';
-}
+          <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right:
