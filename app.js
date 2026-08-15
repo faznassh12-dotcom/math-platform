@@ -73,4 +73,36 @@ async function showLevel(level) {
           embedUrl = "https://www.youtube.com/embed/" + videoId;
         }
         videoHTML = `
-          <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right:
+          <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
+            <iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+          </div>
+        `;
+      }
+
+      htmlOutput += `
+        <div class="math-exercise">
+          <h3>📋 درس: ${lesson.title}</h3>
+          <p>${lesson.content.replace(/\n/g, '<br>')}</p>
+          ${videoHTML}
+        </div>
+      `;
+    });
+
+    dynamicContent.innerHTML = htmlOutput;
+
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+      window.MathJax.typesetPromise();
+    } else if (window.MathJax) {
+      console.warn("MathJax لم تُحمَّل بشكل صحيح، سيتم عرض الدروس بدون تنسيق رموز رياضية.");
+    }
+
+  } catch (error) {
+    dynamicContent.innerHTML = "<h2>❌ حدث خطأ أثناء جلب الدروس. تأكد من اتصالك بالإنترنت وصلاحية الجدول.</h2>";
+    console.error(error);
+  }
+}
+
+function hideContent() {
+  document.getElementById('content-area').style.display = 'none';
+  document.querySelector('.grid-years').style.display = 'grid';
+}
