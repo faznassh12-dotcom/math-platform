@@ -1,15 +1,13 @@
 // الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
 const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDF1PM1RGVmPQ";
 // ملاحظة مهمة: هذا الرابط يقرأ افتراضياً الورقة (tab) الأولى فقط في ملف جوجل شيت (gid=0).
-// إذا كان "درس الجذور" في ورقة (Sheet) مختلفة عن الورقة الأولى، لن يظهر أبداً مهما كان الكود صحيحاً.
-// إن كانت الدروس في ورقة أخرى، أضف "&gid=رقم_الورقة" في نهاية الرابط (يظهر رقم الـ gid في شريط عنوان جوجل شيت).
+// إذا كان "درس الجذور" في ورقة (Tab) جديدة، لن يظهر أبداً مهما كان الكود صحيحاً.
 const sheetUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
 
 // دالة مساعدة لتنظيف النصوص من المسافات الزائدة والرموز الخفية (مثل علامات الاتجاه RTL/LTR)
-// هذه الرموز غير مرئية للعين لكنها تكسر المطابقة بين قيمة العمود وقيمة المستوى المطلوب
 function normalize(str) {
   return String(str)
-    .replace(/[\u200e\u200f\u202a-\u202e]/g, '') // إزالة رموز التحكم بالاتجاه الخفية
+    .replace(/[\u200e\u200f\u202a-\u202e]/g, '')
     .trim()
     .toUpperCase();
 }
@@ -22,7 +20,6 @@ async function showLevel(level) {
   contentArea.style.display = 'block';
   dynamicContent.innerHTML = "<h2>🔄 جاري تحميل الدروس والتمارين من الأستاذ...</h2>";
 
-  // تحديد رقم ملف الـ PDF المرفوع والاسم المناسب حسب المستوى المختار
   let fileNum = "1";
   let levelName = "السنة 1 متوسط";
 
@@ -34,12 +31,10 @@ async function showLevel(level) {
     const response = await fetch(sheetUrl);
     const text = await response.text();
 
-    // استخراج وتنظيف البيانات القادمة من جوجل بنجاح
     const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
     const data = JSON.parse(jsonText);
     const rows = data.table.rows;
 
-    // قراءة الأعمدة بالترتيب الدقيق والصحيح (0=A, 1=B, 2=C, 3=D) مع حماية الخانات الفارغة
     let allLessons = rows.map(row => {
       if (!row || !row.c) return null;
       return {
@@ -50,10 +45,8 @@ async function showLevel(level) {
       };
     }).filter(lesson => lesson !== null && lesson.level !== '');
 
-    // المطابقة الآن تستعمل normalize() بدل toUpperCase() المباشر، لتفادي مشاكل المسافات والرموز الخفية
     let lessons = allLessons.filter(lesson => normalize(lesson.level) === normalize(level));
 
-    // بناء الهيدر الداخلي للمستوى مع زر تحميل الـ PDF المخصص والمربوط بملفاتك الحقيقية
     let htmlOutput = `
       <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
         <h2 style="color: #0056b3; margin-bottom: 15px;">مستوى التعليم المتوسط (${levelName})</h2>
@@ -62,8 +55,6 @@ async function showLevel(level) {
     `;
 
     if (lessons.length === 0) {
-      // رسالة تشخيصية: تعرض للمستخدم/المطوّر ما هي قيم "المستوى" الموجودة فعلياً في الجدول
-      // هذا يساعد على اكتشاف الخطأ الإملائي فوراً بدل التخمين
       const foundLevels = [...new Set(allLessons.map(l => l.level))];
       console.log("المستوى المطلوب:", level);
       console.log("القيم الموجودة فعلياً في عمود المستوى بالجدول:", foundLevels);
@@ -73,7 +64,6 @@ async function showLevel(level) {
       return;
     }
 
-    // عرض الدروس القادمة من جدول جوجل بعد قراءتها بالأعمدة الصحيحة
     lessons.forEach(lesson => {
       let videoHTML = '';
       if (lesson.video) {
@@ -103,8 +93,10 @@ async function showLevel(level) {
     dynamicContent.innerHTML = htmlOutput;
 
     // تشغيل محرك الرياضيات فوراً لتنظيم الرموز والكسور والجذور
-    if (window.MathJax) {
-      MathJax.typesetPromise();
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+      window.MathJax.typesetPromise();
+    } else if (window.MathJax) {
+      console.warn("MathJax لم تُحمَّل بشكل صحيح، سيتم عرض الدروس بدون تنسيق رموز رياضية.");
     }
 
   } catch (error) {
