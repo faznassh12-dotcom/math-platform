@@ -1,5 +1,6 @@
 // الرابط السحابي المباشر والمكتمل لجدول بياناتك الذكي بصيغة JSON
-const sheetUrl = "https://google.com";
+const sheetId = "18JIvC98d1Xi6tCJDO0fdwwdZvvWn-unDF1PM1RGVmPQ";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
 
 async function showLevel(level) {
     document.querySelector('.grid-years').style.display = 'none';
@@ -46,7 +47,7 @@ async function showLevel(level) {
         `;
 
         if (lessons.length === 0) {
-            htmlOutput += `<h3 style="text-align:center; color:#666;">قريباً.. سيتم رفع دروس وتمارين إضافية لهذا المستوى من طرف الأساتذة عبر جدول جوجل!</h3>`;
+            htmlOutput += <h3 style="text-align:center; color:#666;">قريباً.. سيتم رفع دروس وتمارين إضافية لهذا المستوى من طرف الأساتذة عبر جدول جوجل!</h3>;
             dynamicContent.innerHTML = htmlOutput;
             return;
         }
@@ -59,7 +60,8 @@ async function showLevel(level) {
                 if (lesson.video.includes("watch?v=")) {
                     embedUrl = lesson.video.replace("watch?v=", "embed/");
                 } else if (lesson.video.includes("youtu.be/")) {
-                    embedUrl = lesson.video.replace("youtu.be/", "://youtube.com");
+                    const videoId = lesson.video.split("youtu.be/")[1].split(/[?&]/)[0];
+                    embedUrl = "https://www.youtube.com/embed/" + videoId;
                 }
                 videoHTML = `
                     <div style="margin-top: 15px; text-align: center; max-width: 560px; margin-left: auto; margin-right: auto;">
