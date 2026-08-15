@@ -12,7 +12,7 @@
       tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
     };
     </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async src="https://jsdelivr.net"></script>
 </head>
 <body>
 
@@ -22,6 +22,22 @@
     </header>
 
     <main>
+        <!-- قسم تحميل مطبوعات الـ PDF المرتبطة بملفاتك الحقيقية المرفوعة بدقة -->
+        <section class="pdf-section" style="max-width: 1200px; margin: 20px auto; padding: 15px; text-align: center;">
+            <h2 style="color: #0056b3; margin-bottom: 15px;">📚 تحميل مطبوعات وملخصات الـ PDF الرسمية</h2>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+                
+                <a href="lesson1.pdf" download class="btn-download" style="background-color: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📥 تحميل ملخص السنة 1 متوسط (PDF)</a>
+                
+                <a href="lesson2.pdf" download class="btn-download" style="background-color: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📥 تحميل ملخص السنة 2 متوسط (PDF)</a>
+                
+                <a href="lesson3.pdf" download class="btn-download" style="background-color: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📥 تحميل ملخص السنة 3 متوسط (PDF)</a>
+                
+                <a href="lesson4.pdf" download class="btn-download" style="background-color: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📥 تحميل ملخص شهادة BEM (PDF)</a>
+                
+            </div>
+        </section>
+
         <div class="grid-years">
             <div class="card" onclick="showLevel('1AM')">
                 <h2>السنة 1 متوسط</h2>
@@ -33,7 +49,7 @@
             </div>
             <div class="card" onclick="showLevel('3AM')">
                 <h2>السنة 3 متوسط</h2>
-                <p>القوى والمثلث  القائم ث</p>
+                <p>القوى ومثلث فيثاغورث</p>
             </div>
             <div class="card" onclick="showLevel('4AM')">
                 <h2>السنة 4 متوسط (BEM)</h2>
